@@ -1,3 +1,5 @@
+require 'pry'
+
 class Transfer
 
   attr_accessor :sender, :receiver, :status, :amount
@@ -15,19 +17,25 @@ class Transfer
     @sender.valid? && @receiver.valid?
   end
 
+
   def execute_transaction
 
-    if self.valid? && @status == "pending"
-      if @sender.balance < self.amount
-        @status = "rejected"
-      else
-        @receiver.deposit(self.amount)
-        @sender.deposit(-self.amount)
-        @status = "complete"
-      end
+    # if self.valid? && @status == "pending" && @sender.balance > self.amount
+    #   @receiver.deposit(self.amount)
+    #   @sender.deposit(-self.amount)
+    #   @status = "complete"
+    #   binding.pry
+    # else
+    #   @status = "rejected"
+    #   "Transaction rejected. Please check your account balance."
+    # end
+    if valid? && sender.balance > amount && self.status == "pending"
+        sender.balance -= amount
+        receiver.balance += amount
+        self.status = "complete"
     else
-      #@status = "rejected"
-      "Transaction rejected. Please check your account balance."
+        self.status = "rejected"
+        "Transaction rejected. Please check your account balance."
     end
   end
 
